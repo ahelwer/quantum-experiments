@@ -87,8 +87,8 @@
 	// the unit circle. This measurement scheme ensures Alice and Bob have an
 	// 85% probability of their qubits collapsing to the same value, except
 	// when both X and Y are 1, in which case they have an 85% probability of
-	// measuring their qubits in *different* values - thus satisfying the 
-	// X * Y == a xor b formula with an 85% probability in all cases. This
+	// their qubits collapsing to *different* values - thus satisfying the 
+	// X * Y == A xor B formula with an 85% probability in all cases. This
 	// strategy works regardless of who first measures their qubit.
 
     operation MeasureAliceQbit(bit : Bool, qubit : Qubit) : (Result)
