@@ -91,6 +91,10 @@
 	// X * Y == A xor B formula with an 85% probability in all cases. This
 	// strategy works regardless of who first measures their qubit.
 
+	// Measurement in Bob's nonstandard bases is accomplished by first rotating
+	// the state vector by pi/8 radians in one direction or another, then
+	// measuring in the standard computational (Z) basis.
+
     operation MeasureAliceQbit(bit : Bool, qubit : Qubit) : (Result)
     {
         body
