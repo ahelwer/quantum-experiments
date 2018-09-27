@@ -1,7 +1,6 @@
 ﻿namespace CHSH
 {
     open Microsoft.Quantum.Canon;
-    open Microsoft.Quantum.Extensions.Diagnostics;
     open Microsoft.Quantum.Primitive;
 
     operation MeasureAliceQbit(bit : Bool, qbit : Qubit) : (Result)
