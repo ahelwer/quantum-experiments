@@ -1,9 +1,10 @@
 ﻿namespace CHSH
 {
     open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Extensions.Diagnostics;
     open Microsoft.Quantum.Primitive;
 
-    operation MeasureQbit(bit : Bool, qbit : Qubit) : (Result)
+    operation MeasureAliceQbit(bit : Bool, qbit : Qubit) : (Result)
     {
         body
         {
@@ -20,10 +21,26 @@
         }
     }
 
-    operation PlayGame (
-        aliceBit : Bool,
-        bobBit : Bool)
-            : (Bool)
+    operation MeasureBobQbit(bit : Bool, qbit : Qubit) : (Result)
+    {
+        body
+        {
+            if (bit)
+            {
+                // Measure in -pi/8 basis if bit is 1
+                Ry(0.78539816339, qbit);
+                return M(qbit);
+            }
+            else
+            {
+                // Measure in pi/8 basis if bit is 0
+                Ry(-0.78539816339, qbit);
+                return M(qbit);
+            }
+        }
+    }
+
+    operation PlayQuantumStrategy(aliceBit : Bool, bobBit : Bool, aliceMeasuresFirst : Bool) : (Bool)
     {
         body
         {
@@ -40,12 +57,18 @@
                 H(aliceQbit);
                 CNOT(aliceQbit, bobQbit);
 
-                // Rotate Bob's qbit by pi/8
-                Ry(-0.39269908169, bobQbit);
-
                 // Measure qbits in basis depending upon input bit
-                set aliceResult = MeasureQbit(aliceBit, aliceQbit);
-                set bobResult = MeasureQbit(bobBit, bobQbit);
+                // Randomize who measures first
+                if (aliceMeasuresFirst)
+                {
+                    set aliceResult = MeasureAliceQbit(aliceBit, aliceQbit);
+                    set bobResult = MeasureBobQbit(bobBit, bobQbit);
+                }
+                else
+                {
+                    set bobResult = MeasureBobQbit(bobBit, bobQbit);
+                    set aliceResult = MeasureAliceQbit(aliceBit, aliceQbit);
+                }
 
                 ResetAll(qbits);
             }

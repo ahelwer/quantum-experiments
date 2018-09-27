@@ -8,37 +8,38 @@
     {
         static void Main(string[] args)
         {
-            const int trials = 10000;
+            const int trialCount = 10000;
             Random generator = new Random();
             using (var sim = new QuantumSimulator())
             {
-                int win = 0;
-                int sameInput = 0;
-                int sameResult = 0;
-                for (int i = 0; i < trials; i++)
+                int classicalWinCount = 0;
+                int quantumWinCount = 0;
+                for (int i = 0; i < trialCount; i++)
                 {
                     bool aliceBit = GetRandomBit(generator);
                     bool bobBit = GetRandomBit(generator);
-                    bool sameOutput = PlayGame.Run(sim, aliceBit, bobBit).Result;
-                    if (aliceBit && bobBit)
+                    bool aliceMeasuresFirst = GetRandomBit(generator);
+                    bool classicalSameOutput = PlayClassicalStrategy(aliceBit, bobBit);
+                    bool quantumSameOutput = PlayQuantumStrategy.Run(sim, aliceBit, bobBit, aliceMeasuresFirst).Result;
+
+                    if ((aliceBit && bobBit) == !classicalSameOutput)
                     {
-                        sameInput++;
+                        classicalWinCount++;
                     }
 
-                    if (sameOutput)
+                    if ((aliceBit && bobBit) == !quantumSameOutput)
                     {
-                        sameResult++;
-                    }
-
-                    if ((aliceBit && bobBit) == !sameOutput)
-                    {
-                        win++;
+                        quantumWinCount++;
                     }
                 }
 
-                Console.WriteLine((float)sameInput / (float)trials);
-                Console.WriteLine((float)sameResult / (float)trials);
-                Console.WriteLine((float)win / (float)trials);
+                Console.WriteLine("Classical success rate: " + classicalWinCount / (float)trialCount);
+                Console.WriteLine("Quantum success rate: " + quantumWinCount / (float)trialCount);
+
+                if (quantumWinCount > classicalWinCount)
+                {
+                    Console.WriteLine("SPOOKY");
+                }
             }
         }
 
@@ -46,6 +47,14 @@
         {
             int next = generator.Next();
             return (next & 1) == 1;
+        }
+
+        private static bool PlayClassicalStrategy(bool aliceBit, bool bobBit)
+        {
+            // Optimal classical strategy is to always both output 0
+            bool aliceOutput = false;
+            bool bobOutput = false;
+            return aliceOutput == bobOutput;
         }
     }
 }
