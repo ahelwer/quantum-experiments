@@ -1,16 +1,22 @@
 ﻿namespace CHSH
 {
     using System;
-    using Microsoft.Quantum.Simulation.Core;
     using Microsoft.Quantum.Simulation.Simulators;
 
-    class Driver
+    /// <summary>
+    /// The classical driver for the quantum computation.
+    /// </summary>
+    public class Driver
     {
+        /// <summary>
+        /// Main entry point to the program.
+        /// </summary>
+        /// <param name="args">Command-line parameters.</param>
         static void Main(string[] args)
         {
             const int trialCount = 10000;
             Random generator = new Random();
-            using (var sim = new QuantumSimulator())
+            using (QuantumSimulator sim = new QuantumSimulator())
             {
                 int classicalWinCount = 0;
                 int quantumWinCount = 0;
@@ -19,22 +25,32 @@
                     bool aliceBit = GetRandomBit(generator);
                     bool bobBit = GetRandomBit(generator);
                     bool aliceMeasuresFirst = GetRandomBit(generator);
-                    bool classicalSameOutput = PlayClassicalStrategy(aliceBit, bobBit);
-                    bool quantumSameOutput = PlayQuantumStrategy.Run(sim, aliceBit, bobBit, aliceMeasuresFirst).Result;
+                    bool classicalXor =
+                        !PlayClassicalStrategy(aliceBit, bobBit);
+                    bool quantumXor =
+                            !PlayQuantumStrategy.Run(
+                                sim,
+                                aliceBit,
+                                bobBit,
+                                aliceMeasuresFirst).Result;
 
-                    if ((aliceBit && bobBit) == !classicalSameOutput)
+                    if ((aliceBit && bobBit) == classicalXor)
                     {
                         classicalWinCount++;
                     }
 
-                    if ((aliceBit && bobBit) == !quantumSameOutput)
+                    if ((aliceBit && bobBit) == quantumXor)
                     {
                         quantumWinCount++;
                     }
                 }
 
-                Console.WriteLine("Classical success rate: " + classicalWinCount / (float)trialCount);
-                Console.WriteLine("Quantum success rate: " + quantumWinCount / (float)trialCount);
+                Console.WriteLine(
+                    "Classical success rate: "
+                    + classicalWinCount / (float)trialCount);
+                Console.WriteLine(
+                    "Quantum success rate: "
+                    + quantumWinCount / (float)trialCount);
 
                 if (quantumWinCount > classicalWinCount)
                 {
@@ -43,15 +59,27 @@
             }
         }
 
+        /// <summary>
+        /// Generates a single random bit.
+        /// </summary>
+        /// <param name="generator">An initialized RNG.</param>
+        /// <returns>A single random bit, as a bool.</returns>
         private static bool GetRandomBit(Random generator)
         {
             int next = generator.Next();
             return (next & 1) == 1;
         }
 
+        /// <summary>
+        /// Plays the optimal classical strategy for the CHSH game:
+        /// both Alice and Bob both always output 0. This should result
+        /// in success 75% of the time.
+        /// </summary>
+        /// <param name="aliceBit">The bit given to Alice (X).</param>
+        /// <param name="bobBit">The bit given to Bob (Y).</param>
+        /// <returns>Whether Alice & Bob's output bits match.</returns>
         private static bool PlayClassicalStrategy(bool aliceBit, bool bobBit)
         {
-            // Optimal classical strategy is to always both output 0
             bool aliceOutput = false;
             bool bobOutput = false;
             return aliceOutput == bobOutput;
