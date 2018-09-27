@@ -1,7 +1,8 @@
 ﻿namespace CHSH
 {
     open Microsoft.Quantum.Canon;
-    open Microsoft.Quantum.Extensions; 
+    open Microsoft.Quantum.Extensions.Convert;
+    open Microsoft.Quantum.Extensions.Math; 
     open Microsoft.Quantum.Primitive;
 
     //////////////////////////////////////////////////////////////////////////
@@ -117,17 +118,18 @@
     {
         body
         {
-            let rotation = Math.Pi / 8;
             if (bit)
             {
                 // Measure in -pi/8 basis if bit is 1
-                Ry(2 * rotation, qubit);
+                let rotation = ToDouble(2) * PI() / ToDouble(8);
+                Ry(rotation, qubit);
                 return M(qubit);
             }
             else
             {
                 // Measure in pi/8 basis if bit is 0
-                Ry(-2 * rotation, qubit);
+                let rotation = ToDouble(-2) * PI() / ToDouble(8);
+                Ry(rotation, qubit);
                 return M(qubit);
             }
         }

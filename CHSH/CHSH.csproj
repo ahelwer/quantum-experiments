@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Quantum.Canon" Version="0.2.1809.701-preview" />
-    <PackageReference Include="Microsoft.Quantum.Development.Kit" Version="0.2.1809.701-preview" />
   </ItemGroup>
 
 </Project>
